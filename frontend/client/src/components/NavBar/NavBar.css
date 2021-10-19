@@ -1,0 +1,107 @@
+.Nav {
+    background: #01303f !important;
+    /*min-height: 80px;*/
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    /*padding: 0.5rem calc((100vw - 1000px) / 2);*/
+    /*z-index: 10;*/
+    top: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 9999;
+}
+ /*@media screen and (max-width: 768px) {*/
+ /*   .Nav {*/
+ /*       padding: 1rem;*/
+ /*   }*/
+ /*}*/
+
+.NavLogo {
+    color: #d4f0fc !important;
+    display: flex ;
+    align-items: center;
+    font-weight: bolder;
+    text-decoration: none;
+}
+
+.NavLogo :hover {
+    color: #d4f0fc;
+}
+
+.NavSearch {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    height: 30px;
+    border-radius: 7px;
+}
+
+.NavSearch input {
+
+}
+
+.NavLink {
+    color: #d4f0fc;
+    display: flex ;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 100%;
+    cursor: pointer;
+    margin: -5px;
+}
+
+.NavMenu {
+    display: flex !important;
+    align-items: center;
+    margin-right: -24px;
+}
+
+.NavBtn {
+    display: flex;
+    align-items: center;
+    margin-right: 24px !important;
+}
+
+.NavBtnLink {
+    border-radius: 4px;
+    background: #02577a;
+    /*padding: 5px 15px;*/
+    color: #fff;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin: 0.5rem;
+    text-decoration: none;
+}
+
+.LoginBtn {
+
+}
+
+.SignUpBtn {
+     background-color: white;
+}
+
+.NavImage {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    border-radius: 50%;
+    max-height: 40px;
+    max-width: 40px;
+}
+
+.Notifications {
+    align-items: center;
+    padding-left: 2px;
+    padding-right: 4px;
+    border-radius: 40%;
+    background: red;
+    color: white;
+    font-weight: bold;
+    margin-left: -6px;
+}

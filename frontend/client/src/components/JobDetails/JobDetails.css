@@ -1,0 +1,130 @@
+.MainContainer {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.TopBar {
+    display: flex;
+    flex-direction: row;
+    background-color: transparent;
+    min-width: 90%;
+    font-weight: bold;
+}
+
+.LeftBar {
+    display: flex;
+    min-height: 300px;
+    min-width: 55%;
+    padding: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .LeftBar {
+        min-width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+.details-header {
+    display: flex;
+    min-width: 100%;
+    justify-content: flex-end;
+    font-size: 13px;
+}
+
+.details-body {
+    display: flex;
+    text-align: center;
+    padding: 10px;
+}
+
+.RightBar {
+    display: flex;
+    flex-direction: column;
+    min-width: 30%;
+}
+
+@media screen and (max-width: 768px) {
+    .RightBar {
+        min-width: 100%;
+    }
+}
+
+.right-bar-header {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px;
+    border-bottom-color: #cfcfcf;
+}
+
+.right-bar-body {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.right-bar-items {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+
+.item-wrap {
+    display: flex;
+    align-items: center;
+    margin: 8px;
+}
+
+.right-bar-icon {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 50px;
+    font-size: 35px;
+    color: #a3a3a3;
+
+}
+
+.right-details-stacked {
+    display: flex;
+    flex-direction: column;
+}
+
+.right-details-stacked-skills {
+    display: flex;
+    flex-direction: row;
+}
+
+.right-details-stacked-span {
+    margin-right: 5px;
+    background-color: #e2e2e2;
+    padding: 3px 10px 3px 10px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.item-title {
+    font-weight: bold;
+    color: #01303f;
+}
+
+.prop-btn {
+    border-radius: 3px;
+    border: none;
+    height: 60px;
+    min-width: 250px;
+    background-color: #01303f;
+    color: white;
+    font-weight: bold;
+    transition: all .5s ease;
+
+}
+
+.prop-btn:hover {
+    background-color: #02577a !important;
+    color: white;
+
+}

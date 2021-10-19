@@ -1,0 +1,15 @@
+.display-listings-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.listing-item {
+    display: flex;
+    min-width: 100%;
+    min-height: 30px;
+    margin: 10px;
+    padding: 10px;
+    /*border-bottom: 1px solid #e3e3e3;*/
+}

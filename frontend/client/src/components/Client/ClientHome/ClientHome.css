@@ -1,0 +1,57 @@
+.client-home-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 50%;
+}
+
+/* Top Section Div*/
+.top-banner-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.company-name {
+    display: flex;
+}
+
+.post-btn {
+    display: flex;
+}
+
+.post-button {
+    background-color: #01303f;
+    color: white;
+    font-weight: bold;
+    transition: all 0.28s ease-in-out;
+}
+
+.post-button:hover {
+    background-color: #02577a;
+    color: white;
+}
+
+/* Body center */
+.my-listings-div {
+    display: flex;
+    min-width: 50%;
+    min-height: 300px;
+}
+
+.my-listings-header {
+    display: flex;
+    border-bottom: 2px solid #e3e3e3;
+    min-height: 60px;
+    align-items: center;
+
+}
+
+.my-listings-header-title {
+    display: flex;
+    font-size: 25px;
+    padding: 20px;
+    letter-spacing: 1px;
+}
