@@ -6,6 +6,12 @@
     max-width: 50%;
 }
 
+@media screen and (max-width: 760px){
+    .client-home-wrapper {
+        min-width: 100%;
+    }
+}
+
 /* Top Section Div*/
 .top-banner-div {
     display: flex;
@@ -23,14 +29,14 @@
 }
 
 .post-button {
-    background-color: #01303f;
+    background-color: #59b001;
     color: white;
     font-weight: bold;
     transition: all 0.28s ease-in-out;
 }
 
 .post-button:hover {
-    background-color: #02577a;
+    background-color: #59b001;
     color: white;
 }
 

@@ -1,10 +1,5 @@
 .Nav {
     background: #01303f !important;
-    /*min-height: 80px;*/
-    /*display: flex;*/
-    /*justify-content: space-between;*/
-    /*padding: 0.5rem calc((100vw - 1000px) / 2);*/
-    /*z-index: 10;*/
     top: 0;
     position: fixed;
     width: 100%;
@@ -16,32 +11,28 @@
  /*   }*/
  /*}*/
 
+.nav-link {
+    color: white !important;
+}
+
+.nav-link:hover {
+    color: #59b001 !important;
+}
+
 .NavLogo {
-    color: #d4f0fc !important;
+    color: #59b001 !important;
     display: flex ;
     align-items: center;
     font-weight: bolder;
     text-decoration: none;
 }
 
-.NavLogo :hover {
-    color: #d4f0fc;
-}
-
-.NavSearch {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    height: 30px;
-    border-radius: 7px;
-}
-
-.NavSearch input {
-
+.NavLogo:hover {
+    color: #ffffff !important;
 }
 
 .NavLink {
-    color: #d4f0fc;
+    color: #ffffff !important;
     display: flex ;
     align-items: center;
     text-decoration: none;
@@ -74,10 +65,6 @@
     transition: all 0.2s ease-in-out;
     margin: 0.5rem;
     text-decoration: none;
-}
-
-.LoginBtn {
-
 }
 
 .SignUpBtn {

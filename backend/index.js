@@ -35,11 +35,15 @@ if (process.env.NODE_ENV === "production") {
 const user = require("./routes/user");
 const listing = require("./routes/listing");
 const proposal = require("./routes/proposal");
+const admin = require("./routes/admin");
+const static = require("./routes/static");
 
 // Routes Middleware
 app.use("/api/user", user);
 app.use("/api/listing", listing);
 app.use("/api/proposal", proposal);
+app.use("/api/admin", admin);
+app.use("/api/static", static);
 
 const PORT = process.env.PORT || 5000;
 

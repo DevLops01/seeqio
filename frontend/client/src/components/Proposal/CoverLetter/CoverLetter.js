@@ -5,6 +5,7 @@ import "../Proposal.css";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import AppContext from "../../../context/context";
+import "./CoverLetter.css";
 
 function CoverLetter({
   files,
@@ -126,8 +127,10 @@ function CoverLetter({
         </div>
       </div>
 
-      <div>
-        <button onClick={(e) => handleSubmit(e)}>Submit</button>
+      <div className={"sub-btn-div"}>
+        <button className={"sub-prop-btn"} onClick={(e) => handleSubmit(e)}>
+          Submit
+        </button>
       </div>
     </>
   );

@@ -56,6 +56,11 @@ const listingSchema = new mongoose.Schema(
       required: true,
     },
 
+    category: {
+      type: String,
+      required: true,
+    },
+
     requiredSkills: [
       {
         type: String,

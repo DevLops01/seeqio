@@ -6,6 +6,12 @@ const skillSchema = new mongoose.Schema(
       type: String,
       required: true,
       maxlength: 100,
+      unique: true,
+    },
+
+    category: {
+      type: String,
+      required: true,
     },
 
     uuid: {

@@ -116,7 +116,7 @@
     border: none;
     height: 60px;
     min-width: 250px;
-    background-color: #01303f;
+    background-color: #59b001;
     color: white;
     font-weight: bold;
     transition: all .5s ease;
@@ -124,7 +124,7 @@
 }
 
 .prop-btn:hover {
-    background-color: #02577a !important;
+    background-color: #01303f !important;
     color: white;
 
 }

@@ -50,7 +50,10 @@ function FindWork() {
         <div className={"card listings-middle-div"}>
           <JobListing page={page} />
           <div>
-            <button className={"load-more"} onClick={() => setPage(page + 1)}>
+            <button
+              className={"btn load-more"}
+              onClick={() => setPage(page + 1)}
+            >
               View more
             </button>
           </div>

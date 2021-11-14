@@ -18,6 +18,7 @@
     border-color: #02577a;
     border-radius: 5px 0 0 5px;
 }
+
 .search-btn {
     border: none;
     height: 35px;
@@ -79,17 +80,17 @@
 }
 
 .load-more {
-    background-color: #01303f;
+    background-color: #59b001;
     color: white;
     border-radius: 5px;
     border: none;
     transition: ease-in-out 0.2s;
     font-weight: bold;
-    padding: 5px;
+    padding: 10px;
 }
 
 .load-more:hover {
-    background-color: #02577a;
+    background-color: #01303f;
     color: aliceblue;
 }
 

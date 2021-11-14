@@ -1,0 +1,26 @@
+.sub-btn-div {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.sub-prop-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    border: none;
+    height: 60px;
+    min-width: 250px;
+    background-color: #59b001;
+    color: white;
+    font-weight: bold;
+    transition: all .5s ease;
+}
+
+.sub-prop-btn:hover {
+    background-color: #01303f !important;
+    color: white;
+
+}
