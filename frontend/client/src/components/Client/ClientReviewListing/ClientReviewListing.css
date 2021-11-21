@@ -1,0 +1,147 @@
+.review-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.review-card-body {
+    display: flex;
+    width: 80%;
+    border-radius: 5px;
+    border: 2px solid #e3e3e3;
+    min-height: 300px;
+}
+
+.review-card-body-header {
+    display: flex;
+    min-height: 75px;
+    align-items: center;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 20px;
+}
+
+.header-text {
+    display: flex;
+    color: #01303f;
+}
+
+.review-card-body-section {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 20px;
+    width: 100%;
+}
+
+.section-name {
+    display: flex;
+    width: 100%;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+}
+
+.section-input {
+    display: flex;
+    color: #434343;
+    width: 60%;
+    height: 30px;
+    border: 1px solid ;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.section-select {
+    display: flex;
+    color: #434343;
+    width: 60%;
+    height: 50px;
+    border: 1px solid ;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.section-text-field {
+    display: flex;
+    color: #434343;
+    width: 60%;
+    border: 1px solid ;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.section-attach-files {
+    margin: 10px 0 10px 0;
+}
+
+.attach-input {
+    display: none;
+
+}
+
+.attach-button {
+    font-weight: bold;
+    color: #59b001;
+}
+
+.skills-div {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 80%;
+    justify-content: flex-start;
+}
+
+.skill-select {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    background-color: #e3e3e3;
+    font-size: 10px;
+    min-width: 50px;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+.section-multiple {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.section-multiple-item {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #e3e3e3;
+
+}
+
+.section-multiple .section-name {
+    display: flex;
+    /*justify-content: center;*/
+}
+
+.check-item {
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+    margin: 10px;
+}
+
+.check-item-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.choice {
+    margin-left: 5px;
+}
+
+.description {
+    color: #a3a3a3;
+    font-size: small;
+}
+
+

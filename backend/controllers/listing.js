@@ -10,7 +10,7 @@ exports.recent = async (req, res) => {
     const resultsPerPage = 3;
     let page = req.body.page >= 1 ? req.body.page : 1;
 
-    const listings = await Listing.find()
+    const listings = await Listing.find({ isDraft: false })
       .sort({ createdAt: "desc" })
       .limit(resultsPerPage * page);
     // .skip(resultsPerPage * page);
@@ -26,7 +26,7 @@ exports.recent = async (req, res) => {
 // @access  Private
 exports.listingById = async (req, res) => {
   try {
-    const listing = await Listing.find({ uuid: req.params.id });
+    const listing = await Listing.findOne({ uuid: req.params.id });
 
     if (listing) {
       return res.status(200).send(listing);
@@ -57,6 +57,66 @@ exports.clientListings = async (req, res) => {
   }
 };
 
+// @route   POST api/listing/draft
+// @desc    save draft
+// @access  Private
+exports.draft = async (req, res) => {
+  try {
+    const id = uuidv4();
+
+    const skillList = req.body.skills;
+
+    const getEach = skillList.split(",");
+
+    const draft = new Listing({
+      creator: req.body.creator,
+      title: req.body.title,
+      category: req.body.category,
+      payType: req.body.payType.toLowerCase(),
+      payRate: req.body.budget,
+      description: req.body.description,
+      experienceLevel: "expert",
+      startDate: Date.now(), // change
+      endDate: Date.now(), // change
+      requiredSkills: getEach,
+      jobDuration: "1-3 months",
+      tokensRequired: 4,
+      funded: true,
+      openings: 1,
+      isDraft: true,
+      uuid: id,
+    });
+
+    await draft.save();
+
+    return res.send({ id });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send("Error");
+  }
+};
+
+// @route   GET api/listing/draft/:id
+// @desc    get single listings
+// @access  Private
+exports.getDraft = async (req, res) => {
+  try {
+    const listing = await Listing.findOne({
+      uuid: req.params.id,
+      creator: req.user.id,
+    });
+
+    if (listing) {
+      return res.status(200).send(listing);
+    }
+
+    return res.status(404).send("Listing not found");
+  } catch (e) {
+    console.log(e);
+    return res.status(404).send("Listing not found");
+  }
+};
+
 // @route   POST api/listing/create
 // @desc    create new job listing
 // @access  Private
@@ -65,40 +125,34 @@ exports.create = async (req, res) => {
     const {
       creator,
       title,
-      clientRating,
       payType,
-      payRate,
+      budget,
       description,
-      proposals,
       experienceLevel,
       startDate,
       endDate,
-      requiredSkills,
+      skills,
       jobDuration,
-      tokensRequired,
-      funded,
       openings,
-      hires,
     } = req.body;
 
     const listing = await new Listing({
       creator,
       title,
-      clientRating,
-      payType,
-      payRate,
+      category: req.body.category,
+      payType: payType.toLowerCase(),
+      payRate: budget,
       description,
-      proposals,
       experienceLevel,
       startDate,
       endDate,
-      requiredSkills,
+      requiredSkills: skills,
       jobDuration,
-      tokensRequired,
-      funded,
+      tokensRequired: 2,
+      funded: true,
       openings,
-      hires,
       uuid: uuidv4(),
+      isDraft: false,
     });
 
     await listing.save();

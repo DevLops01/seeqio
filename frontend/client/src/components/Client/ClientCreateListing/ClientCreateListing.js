@@ -1,14 +1,23 @@
 import { React, useContext, useEffect, useState } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, useHistory } from "react-router-dom";
 import AppContext from "../../../context/context";
 import "./ClientCreateListing.css";
 import axios from "axios";
 import loading from "../../../assets/loading.gif";
+import { v4 as uuidv4 } from "uuid";
 
 function ClientCreateListing() {
-  const [categories, setCategories] = useState();
-  const [selectedCategory, setSelectedCategory] = useState();
-  const [skills, setSkills] = useState();
+  const { user, isSession } = useContext(AppContext);
+
+  let history = useHistory();
+
+  if (isSession.isAuth === "false") {
+    history.push("/login");
+  }
+
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [skills, setSkills] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [step, setStep] = useState(1);
   const [showLoading, setShowLoading] = useState(false);
@@ -50,19 +59,28 @@ function ClientCreateListing() {
     setSelectedSkills([]);
   };
 
-  const handleSelectSkill = (id) => {
+  const handleSelectSkill = async (id) => {
     switch (true) {
       case selectedSkills.includes(id):
-        const filteredSkills = selectedSkills.filter((skills) => {
-          return skills !== id;
+        const filteredSkills = selectedSkills.filter((selected) => {
+          return selected !== id;
         });
+
         setSelectedSkills(filteredSkills);
-        setListingData({ ...listingData, ["skills"]: selectedSkills });
+        setListingData({ ...listingData, ["skills"]: filteredSkills });
         return;
 
       case !selectedSkills.includes(id):
+        const allSkills = [];
+
+        allSkills.push(id);
+
+        selectedSkills.forEach((item) => {
+          allSkills.push(item);
+        });
+
+        setListingData({ ...listingData, ["skills"]: allSkills });
         setSelectedSkills((selectedSkills) => [...selectedSkills, id]);
-        setListingData({ ...listingData, ["skills"]: selectedSkills });
         return;
 
       default:
@@ -128,6 +146,38 @@ function ClientCreateListing() {
     }
 
     setListingData({ ...listingData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmitReview = async () => {
+    const isEmptyField = Object.values(listingData).some(
+      (item) => item === null || item === ""
+    );
+
+    if (isEmptyField === false) {
+      let data = new FormData();
+
+      data.append("creator", user.uuid);
+      data.append("title", listingData.title);
+      data.append("description", listingData.description);
+      data.append("category", listingData.category);
+      data.append("skills", listingData.skills);
+      data.append("payType", listingData.payType);
+      data.append("budget", listingData.budget);
+
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}/api/listing/draft`, data, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.data.id);
+            history.push(`/client/listing/create/review/${res.data.id}`);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
 
   useEffect(() => {
@@ -286,7 +336,7 @@ function ClientCreateListing() {
                       value={selectedCategory}
                       className="form-control"
                     >
-                      <option hidden={true} value={""}>
+                      <option key={uuidv4()} hidden={true} value={""}>
                         {"SELECT"}
                       </option>
 
@@ -294,7 +344,8 @@ function ClientCreateListing() {
                         categories.map((cat) => (
                           <>
                             <option value={cat.uuid} key={cat.uuid}>
-                              {cat.title.toUpperCase()}
+                              {cat.title.charAt(0).toUpperCase() +
+                                cat.title.slice(1)}
                             </option>
                           </>
                         ))
@@ -363,7 +414,7 @@ function ClientCreateListing() {
                       onChange={(e) => handleUpdate(e)}
                     >
                       <option>Hourly</option>
-                      <option>Fixed Price</option>
+                      <option>Fixed</option>
                     </select>
                   </div>
                 </div>
@@ -465,7 +516,7 @@ function ClientCreateListing() {
                     <button
                       className={"btn"}
                       value={1}
-                      onClick={(e) => handleStep(e)}
+                      onClick={(e) => handleSubmitReview(e)}
                     >
                       Review
                     </button>

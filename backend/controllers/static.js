@@ -7,11 +7,24 @@ const Category = require("../models/Category");
 exports.categories = async (req, res) => {
   try {
     const categories = await Category.find({});
-    console.log(categories);
     if (categories) res.status(200).send(categories);
   } catch (e) {
     console.log(e);
     res.status(404).send("Categories not found");
+  }
+};
+
+// @route   GET api/static/category/:id
+// @desc    returns category
+// @access  Private
+exports.category = async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const category = await Category.findOne({ uuid: req.params.id });
+    if (category) res.status(200).send(category);
+  } catch (e) {
+    console.log(e);
+    res.status(404).send("Category not found");
   }
 };
 

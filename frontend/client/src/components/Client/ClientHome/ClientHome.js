@@ -4,6 +4,7 @@ import AppContext from "../../../context/context";
 import "./ClientHome.css";
 import axios from "axios";
 import ClientListings from "../ClientListings/ClientListings";
+import ClientDrafts from "../ClientDrafts/ClientDrafts";
 
 function ClientHome() {
   const history = useHistory();
@@ -39,9 +40,10 @@ function ClientHome() {
           <div className={"container my-listings-header"}>
             <h4 className={"my-listings-header-title"}>My Listings</h4>
           </div>
-
           <ClientListings />
         </div>
+
+        <ClientDrafts />
       </div>
     </>
   );

@@ -11,6 +11,8 @@ import ClientHome from "./components/Client/ClientHome/ClientHome";
 import CLRoute from "./components/Auth/ClientRoute";
 import FLRoute from "./components/Auth/FreelancerRoute";
 import ClientCreateListing from "./components/Client/ClientCreateListing/ClientCreateListing";
+import ClientReviewListing from "./components/Client/ClientReviewListing/ClientReviewListing";
+import ClientEdit from "./components/Client/ClientEdit/ClientEdit";
 
 function App() {
   return (
@@ -27,7 +29,17 @@ function App() {
         <CLRoute
           exact
           path={"/client/listing/create"}
-          component={ClientCreateListing}
+          component={ClientReviewListing}
+        />
+        {/*<CLRoute*/}
+        {/*  exact*/}
+        {/*  path={"/client/listing/create/review/:id"}*/}
+        {/*  component={ClientReviewListing}*/}
+        {/*/>*/}
+        <CLRoute
+          exact
+          path={"/client/listing/edit/:id"}
+          component={ClientEdit}
         />
       </Switch>
     </Router>

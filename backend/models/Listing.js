@@ -13,15 +13,9 @@ const listingSchema = new mongoose.Schema(
       maxlength: 100,
     },
 
-    clientRating: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-
     payType: {
       type: String,
-      enum: ["hourly, fixed"],
+      enum: ["hourly", "fixed"],
       required: true,
     },
 
@@ -43,6 +37,7 @@ const listingSchema = new mongoose.Schema(
 
     experienceLevel: {
       type: String,
+      enum: ["beginner", "intermediate", "expert"],
       required: true,
     },
 
@@ -70,10 +65,17 @@ const listingSchema = new mongoose.Schema(
 
     jobDuration: {
       type: String,
+      enum: ["1 to 3 months", "3 to 6 months", "6 or more months"],
       required: true,
     },
 
-    seeqs: {
+    attachments: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+
+    tokensRequired: {
       type: Number,
       required: true,
     },
@@ -90,10 +92,11 @@ const listingSchema = new mongoose.Schema(
       default: 1,
     },
 
-    hires: {
-      type: Number,
-      default: 0,
-    },
+    hires: [
+      {
+        type: String,
+      },
+    ],
 
     uuid: {
       type: String,
@@ -104,6 +107,11 @@ const listingSchema = new mongoose.Schema(
     completed: {
       type: Boolean,
       default: false,
+    },
+
+    isDraft: {
+      type: Boolean,
+      default: true,
     },
 
     createdAt: {

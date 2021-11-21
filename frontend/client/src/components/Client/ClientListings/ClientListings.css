@@ -7,9 +7,35 @@
 
 .listing-item {
     display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
     min-width: 100%;
     min-height: 30px;
-    margin: 10px;
-    padding: 10px;
-    /*border-bottom: 1px solid #e3e3e3;*/
+    border-bottom: 1px solid #e3e3e3;
+    padding: 20px;
+}
+
+.listing-title {
+    display: flex;
+    font-weight: bold;
+    padding: 5px;
+    color: #59b001;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.listing-title:hover {
+    color: black;
+}
+
+.edit-delete-listing {
+    display: flex;
+    font-size: 20px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.ed-inner {
+    color: #59b001;
+    margin-left: 10px;
 }

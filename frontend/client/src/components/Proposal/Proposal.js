@@ -94,7 +94,7 @@ function Proposal() {
         withCredentials: true,
       })
       .then((res) => {
-        setListing(res.data);
+        setListing([res.data]);
       })
       .catch((e) => {
         console.log(e);
