@@ -17,7 +17,7 @@ function ClientListings() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}/api/listing/client/recent`, {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/listing/client/recent/3`, {
         withCredentials: true,
       })
       .then((res) => {

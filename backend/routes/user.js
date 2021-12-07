@@ -18,7 +18,7 @@ router.post("/", auth, user);
 // @route   GET api/user/:id
 // @desc    returns the specified user
 // @access  Private
-router.get("/:id", auth, userById);
+router.get("/:id", userById);
 
 // @route   POST api/user/register
 // @desc    Creates new user

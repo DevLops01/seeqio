@@ -5,11 +5,15 @@ import axios from "axios";
 
 function Register() {
   let history = useHistory();
-  const { isSession, setIsSession } = useContext(AppContext);
+  const { setUser, isSession, setIsSession } = useContext(AppContext);
 
   if (isSession.isAuth === "true") {
     history.push("/find-work");
   }
+
+  useEffect(() => {
+    setUser({});
+  }, []);
 
   const [error, setError] = useState("");
   const [register, setRegister] = useState({

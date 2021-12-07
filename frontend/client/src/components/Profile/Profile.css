@@ -1,0 +1,33 @@
+.profile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.profile-card-body {
+    display: flex;
+    width: 80%;
+    border-radius: 5px;
+    border: 2px solid #e3e3e3;
+    min-height: 300px;
+}
+
+.profile-card-body-header {
+    display: flex;
+    min-height: 75px;
+    align-items: center;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 20px;
+}
+
+.profile-header-text {
+    display: flex;
+    flex-direction: column;
+    color: #01303f;
+}
+
+.user-profile-info {
+    display: flex;
+    flex-direction: column;
+}

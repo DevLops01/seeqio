@@ -3,9 +3,16 @@ import { Route, Redirect } from "react-router-dom";
 import AppContext from "../../context/context";
 
 const FLRoute = ({ component: Component, ...props }) => {
-  const { setIsSession } = useContext(AppContext);
+  const { user, setUser, setIsSession } = useContext(AppContext);
   const userType = localStorage.getItem("userType");
   const isAuth = localStorage.getItem("isAuth");
+
+  useEffect(() => {
+    if (user.type && user.type !== userType) {
+      setIsSession(false);
+      localStorage.setItem("isAuth", false);
+    }
+  }, [user]);
 
   return (
     <Route

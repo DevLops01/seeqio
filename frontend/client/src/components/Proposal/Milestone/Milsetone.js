@@ -37,7 +37,6 @@ function Milestone({ milestones, setMilestones }) {
         key: uuidv4(),
       },
     ]);
-    console.log(milestones);
   };
 
   return (

@@ -43,7 +43,12 @@ function ClientHome() {
           <ClientListings />
         </div>
 
-        <ClientDrafts />
+        <div className={"card my-listings-div"}>
+          <div className={"container my-listings-header"}>
+            <h4 className={"my-listings-header-title"}>Drafts</h4>
+          </div>
+          <ClientDrafts />
+        </div>
       </div>
     </>
   );

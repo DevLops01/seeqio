@@ -136,7 +136,13 @@ exports.user = async (req, res) => {
 // @access  Private
 exports.userById = async (req, res) => {
   try {
-    console.log("ping");
+    const user = await User.findOne({ uuid: req.params.id });
+
+    if (!user) {
+      return res.status(404).send("user not found");
+    }
+
+    res.status(200).send(user);
   } catch (e) {
     return res.status(404).send({ error: "user not found" });
   }

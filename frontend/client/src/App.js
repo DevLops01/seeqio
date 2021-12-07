@@ -13,6 +13,7 @@ import FLRoute from "./components/Auth/FreelancerRoute";
 import ClientCreateListing from "./components/Client/ClientCreateListing/ClientCreateListing";
 import ClientReviewListing from "./components/Client/ClientReviewListing/ClientReviewListing";
 import ClientEdit from "./components/Client/ClientEdit/ClientEdit";
+import Profile from "./components/Profile/Profile";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route exact path={"/"} component={Home} />
         <Route exact path={"/login"} component={Login} />
         <Route exact path={"/register"} component={Register} />
+        <Route exact path={"/freelancer/:id"} component={Profile} />
         <FLRoute exact path={"/find-work"} component={FindWork} />
         <FLRoute exact path={"/find-work/:id"} component={JobDetails} />
         <FLRoute exact path={"/proposal/create/:id"} component={Proposal} />
@@ -29,7 +31,7 @@ function App() {
         <CLRoute
           exact
           path={"/client/listing/create"}
-          component={ClientReviewListing}
+          component={ClientCreateListing}
         />
         {/*<CLRoute*/}
         {/*  exact*/}

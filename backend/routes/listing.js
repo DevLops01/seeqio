@@ -9,6 +9,7 @@ const {
   clientListings,
   draft,
   getDraft,
+  clientDraftListings,
 } = require("../controllers/listing");
 
 const storage = multer.memoryStorage({
@@ -49,9 +50,14 @@ router.post("/create", auth, upload, create);
 // @access  Private
 router.post("/edit/:id", auth, upload, create);
 
-// @route   GET api/listing/client/recent
+// @route   GET api/listing/client/recent/limit
 // @desc    returns recent listings created by a client user
 // @access  Private
-router.get("/client/recent", auth, clientListings);
+router.get("/client/recent/:limit", auth, clientListings);
+
+// @route   GET api/listing/client/recent/limit
+// @desc    returns recent listings created by a client user
+// @access  Private
+router.get("/client/recent/drafts/:limit", auth, clientDraftListings);
 
 module.exports = router;

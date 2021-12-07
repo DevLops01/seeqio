@@ -1,52 +1,70 @@
-import { React, useContext, useEffect, useState } from "react";
-import { Route, Redirect, useHistory } from "react-router-dom";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { Redirect, Route, useHistory, Link, useParams } from "react-router-dom";
 import AppContext from "../../../context/context";
-import "./ClientCreateListing.css";
+import { MdDelete, MdAttachFile, MdPerson } from "react-icons/md";
+import { FaDollarSign } from "react-icons/fa";
+import { TiDelete } from "react-icons/ti";
 import axios from "axios";
-import loading from "../../../assets/loading.gif";
+import "./ClientCreateListing.css";
 import { v4 as uuidv4 } from "uuid";
 
 function ClientCreateListing() {
-  const { user, isSession } = useContext(AppContext);
-
   let history = useHistory();
+  const { id } = useParams();
+  const fileInput = useRef();
 
-  if (isSession.isAuth === "false") {
-    history.push("/login");
-  }
+  const { user } = useContext(AppContext);
 
+  // if (isSession.isAuth === "false") {
+  //   history.push("/login");
+  // }
+
+  const [isMuted, setIsMuted] = useState(true);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [step, setStep] = useState(1);
-  const [showLoading, setShowLoading] = useState(false);
-  const [nextDisabled, setNextDisabled] = useState(true);
+  const [scale, setScale] = useState("");
+  const [length, setLength] = useState("");
+  const [experience, setExperience] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [payTypeChoice, setPayTypeChoice] = useState("hourly");
   const [listingData, setListingData] = useState({
     title: "",
     description: "",
     category: "",
     skills: [],
-    payType: "",
+    payType: payTypeChoice,
+    openings: "",
     budget: "",
   });
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}/api/static/categories`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setCategories(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, []);
+    if (
+      selectedCategory &&
+      selectedSkills &&
+      scale &&
+      length &&
+      experience &&
+      skills &&
+      payTypeChoice &&
+      listingData.title &&
+      listingData.openings &&
+      listingData.description &&
+      listingData.category &&
+      listingData.skills !== [] &&
+      listingData.payType &&
+      listingData.budget
+    ) {
+      setIsMuted(false);
+    } else {
+      setIsMuted(true);
+    }
+  });
 
   const onSelectCategory = async (categoryId) => {
     setSelectedCategory(categoryId);
-
+    console.log(categoryId);
     axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/api/static/skills/${categoryId}`,
@@ -88,446 +106,550 @@ function ClientCreateListing() {
     }
   };
 
-  const handleStep = async (e) => {
-    if (parseInt(e.target.value) === 0 && step > 1) {
-      await setShowLoading(true);
-
-      setTimeout(() => {
-        setShowLoading(false);
-      }, 250);
-      setStep(step - 1);
-    }
-
-    if (parseInt(e.target.value) === 1 && step < 5) {
-      setNextDisabled(true);
-
-      switch (true) {
-        case step === 1 && !listingData.title:
-          console.log("Title is required.");
-          return;
-
-        case step === 2 && !listingData.description:
-          console.log("Description is required.");
-          return;
-
-        case (step === 3 && listingData.category.length < 1) ||
-          (step === 3 && listingData.skills.length < 1):
-          console.log("Category & Skills are required.");
-          return;
-
-        case step === 4 && !listingData.payType:
-          console.log("Pay Type is required.");
-          return;
-
-        case step === 5 && !listingData.budget:
-          console.log("Budget is required.");
-          return;
-      }
-
-      await setShowLoading(true);
-
-      setTimeout(() => {
-        setShowLoading(false);
-      }, 250);
-
-      setStep(step + 1);
-    }
+  const handleFileUpload = () => {
+    fileInput.current.click();
   };
 
-  const handleUpdate = (e) => {
-    const name = e.target.name;
+  const handleFileAdd = (e) => {
+    const insertedFile = e.target.files;
+    const newFiles = [];
 
-    if (
-      name === "description" &&
-      listingData.description.length >= 5000 &&
-      e.nativeEvent.inputType !== "deleteContentBackward"
-    ) {
+    // Gets all files if any and adds them to the uploads array
+    files.map((item) => {
+      newFiles.push(item);
+    });
+
+    // Loops through the newly added files and pushed them to the uploads array
+    for (let i = 0; i < insertedFile.length; i++) {
+      const fileObject = {};
+      fileObject["name"] = insertedFile[i].name;
+      fileObject["key"] = uuidv4();
+      fileObject["file"] = insertedFile[i];
+
+      newFiles.push(fileObject);
+    }
+
+    // Sets the state of SetFiles to uploads (previously uploaded, and newly uploaded)
+    setFiles(newFiles);
+  };
+
+  const handleRemoveFile = (id) => {
+    setFiles(files.filter((file) => file.key !== id));
+  };
+
+  const handleScale = (e) => {
+    setScale(e.target.value);
+  };
+
+  const handleLength = (e) => {
+    setLength(e.target.value);
+  };
+
+  const handleExperience = (e) => {
+    setExperience(e.target.value);
+  };
+
+  const handlePayTypeChoice = (e) => {
+    setPayTypeChoice(e.target.value);
+    setListingData({ ...listingData, ["payType"]: e.target.value });
+    console.log(listingData);
+  };
+
+  const handleListingData = (e) => {
+    if (e.target.name === "budget" && isNaN(e.target.value)) {
+      return;
+    } else if (e.target.name === "openings" && isNaN(e.target.value)) {
       return;
     }
 
     setListingData({ ...listingData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitReview = async () => {
-    const isEmptyField = Object.values(listingData).some(
-      (item) => item === null || item === ""
-    );
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/api/static/categories`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
-    if (isEmptyField === false) {
-      let data = new FormData();
+  const handleSubmit = async () => {
+    let data = new FormData();
+    files.map((upload) => {
+      data.append("file", upload.file);
+    });
 
-      data.append("creator", user.uuid);
-      data.append("title", listingData.title);
-      data.append("description", listingData.description);
-      data.append("category", listingData.category);
-      data.append("skills", listingData.skills);
-      data.append("payType", listingData.payType);
-      data.append("budget", listingData.budget);
+    data.append("creator", user.uuid);
+    data.append("title", listingData.title);
+    data.append("description", listingData.description);
+    data.append("category", listingData.category);
+    data.append("skills", listingData.skills);
+    data.append("payType", listingData.payType);
+    data.append("budget", listingData.budget);
+    data.append("scale", scale);
+    data.append("length", length);
+    data.append("experience", experience);
 
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}/api/listing/draft`, data, {
-          withCredentials: true,
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            console.log(res.data.id);
-            history.push(`/client/listing/create/review/${res.data.id}`);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/api/listing/create`, data, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
-  useEffect(() => {
-    switch (true) {
-      case step === 1 && listingData.title.length > 0:
-        setNextDisabled(false);
-        return;
-
-      case step === 2 &&
-        listingData.description.length > 1 &&
-        listingData.description.length <= 5000:
-        setNextDisabled(false);
-        return;
-
-      case step === 3 &&
-        listingData.category.length > 0 &&
-        listingData.skills.length > 0:
-        setNextDisabled(false);
-        return;
-
-      case step === 4 && listingData.payType.length > 0:
-        setNextDisabled(false);
-        return;
-
-      case step === 5 && listingData.budget:
-        setNextDisabled(false);
-        return;
-
-      default: {
-        setNextDisabled(true);
-        return;
-      }
-    }
-  }, [listingData]);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${process.env.REACT_APP_BASE_URL}/api/listing/draft/${id}`, {
+  //       withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setListing(res.data);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }, [id]);
 
   return (
     <>
-      <div className={"container client-create-wrapper"}>
-        <div className={"container client-create-body"}>
-          <div className={""}>
-            <h4>Create A Job Listing</h4>
-          </div>
+      <div className={"container"}>
+        <span>
+          <div className={"review-wrapper"}>
+            {/*Header*/}
+            <div className={"card review-card-body"}>
+              <div className={"review-card-body-header"}>
+                <span className={"header-text"}>
+                  <h2>Post Your Job</h2>
+                </span>
+              </div>
 
-          <span>
-            <p>Step {step} / 5</p>
-          </span>
-
-          {step === 1 ? (
-            <>
-              {showLoading ? (
-                <div className={"card section-div"}>
-                  <div className={"section-header"}></div>
-
-                  <div className={"section-inner"}>
-                    <div className={"loading-gif"}>
-                      <img src={loading} alt="" />{" "}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Title section*/
-                <div className={"card section-div"}>
-                  <div className={"section-header"}>
-                    <h4>Title</h4>
-                  </div>
-
-                  <div className={"section-inner"}>
-                    <p>
-                      Help candidates better understand your project by adding a
-                      descriptive title.
-                    </p>
-                    <input
-                      name={"title"}
-                      value={listingData.title}
-                      onChange={(e) => handleUpdate(e)}
-                      className={"create-form-field form-control"}
-                      type="text"
-                      placeholder={"Give your job a title"}
-                    />
-                  </div>
-                </div>
-                /* End Title section*/
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-
-          {step === 2 ? (
-            <>
-              {showLoading ? (
-                <div className={"card section-div"}>
-                  <div className={"section-header"}></div>
-
-                  <div className={"section-inner"}>
-                    <div className={"loading-gif"}>
-                      <img src={loading} alt="" />{" "}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Description */
-                <div className={"card section-div"}>
-                  <div className={"section-header"}>
-                    <h4>Description</h4>
-                  </div>
-
-                  <div className={"section-inner"}>
-                    <p>
-                      Let your potential freelancer know a little bit about your
-                      project's needs.
-                    </p>
-                    <textarea
-                      name={"description"}
-                      value={listingData.description}
-                      onChange={(e) => handleUpdate(e)}
-                      className={"cover-letter-field"}
-                      rows={5}
-                    ></textarea>
-                  </div>
-                  <span className={"max-char"}>
-                    {listingData.description.length} / 5000
+              {/*Title*/}
+              <div className={"review-card-body-section"}>
+                <div className={"section-name"}>
+                  <span className={"section-name-label"}>Title</span>
+                  <span className={"description"}>
+                    Add a title to your project.
                   </span>
                 </div>
-                /* End Description */
-              )}
-            </>
-          ) : (
-            <></>
-          )}
 
-          {step === 3 ? (
-            <>
-              {showLoading ? (
-                <div className={"card section-div"}>
-                  <div className={"section-header"}></div>
+                <input
+                  name={"title"}
+                  value={listingData.title}
+                  className={"section-input"}
+                  type="text"
+                  onChange={(e) => handleListingData(e)}
+                />
+              </div>
 
-                  <div className={"section-inner"}>
-                    <div className={"loading-gif"}>
-                      <img src={loading} alt="" />{" "}
-                    </div>
-                  </div>
+              {/*Description*/}
+              <div className={"review-card-body-section"}>
+                <div className={"section-name"}>
+                  <span className={"section-name-label"}>Description</span>
+                  <span className={"description"}>
+                    Give a detailed description so freelancers can know more
+                    about your job.
+                  </span>
                 </div>
-              ) : (
-                /* Category & Skills section*/
-                <div className={"card section-div"}>
-                  <div className={"section-header"}>
-                    <h4>Category & Skills </h4>
-                  </div>
 
-                  <div className={"section-inner"}>
-                    <p>Choose a Category</p>
-                    <select
-                      defaultValue={""}
-                      onChange={(e) => onSelectCategory(e.target.value)}
-                      value={selectedCategory}
-                      className="form-control"
-                    >
-                      <option key={uuidv4()} hidden={true} value={""}>
-                        {"SELECT"}
-                      </option>
+                <textarea
+                  name={"description"}
+                  value={listingData.description}
+                  rows={5}
+                  className={"section-text-field"}
+                  onChange={(e) => handleListingData(e)}
+                />
 
-                      {categories ? (
-                        categories.map((cat) => (
-                          <>
-                            <option value={cat.uuid} key={cat.uuid}>
-                              {cat.title.charAt(0).toUpperCase() +
-                                cat.title.slice(1)}
-                            </option>
-                          </>
-                        ))
-                      ) : (
-                        <>Loading Categories</>
-                      )}
-                    </select>
-
-                    <div className={"skills-div"}>
-                      {skills ? (
-                        skills.map((skill) => (
-                          <span
-                            className={"skill-select"}
-                            value={skill.uuid}
-                            key={skill.uuid}
-                            style={
-                              selectedSkills.includes(skill.uuid)
-                                ? { backgroundColor: "#59b001", color: "white" }
-                                : { backgroundColor: "#e3e3e3" }
-                            }
-                            onClick={() => handleSelectSkill(skill.uuid)}
-                          >
-                            {skill.title.toUpperCase()}
-                          </span>
-                        ))
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                /* End Category & Skills section*/
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-
-          {step === 4 ? (
-            <>
-              {showLoading ? (
-                <div className={"card section-div"}>
-                  <div className={"section-header"}></div>
-
-                  <div className={"section-inner"}>
-                    <div className={"loading-gif"}>
-                      <img src={loading} alt="" />{" "}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Hourly or Fixed*/
-                <div className={"card section-div"}>
-                  <div className={"section-header"}>
-                    <h4>Pay Type </h4>
-                  </div>
-
-                  <div className={"section-inner"}>
-                    <p>
-                      Would you like to pay by the hour or set a fixed Price?
-                    </p>
-                    <select
-                      className="form-control"
-                      name={"payType"}
-                      value={listingData.payType}
-                      onChange={(e) => handleUpdate(e)}
-                    >
-                      <option>Hourly</option>
-                      <option>Fixed</option>
-                    </select>
-                  </div>
-                </div>
-                /* End hourly or fixed */
-              )}
-            </>
-          ) : (
-            <></>
-          )}
-          {step === 5 ? (
-            <>
-              {showLoading ? (
-                <div className={"card section-div"}>
-                  <div className={"section-header"}></div>
-
-                  <div className={"section-inner"}>
-                    <div className={"loading-gif"}>
-                      <img src={loading} alt="" />{" "}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Budget */
-                <div className={"card section-div"}>
-                  <div className={"section-header"}>
-                    <h4>Budget</h4>
-                  </div>
-
-                  <div className={"section-inner"}>
-                    <p>How much will you pay for this job</p>
+                <div className={"section-attach-files"}>
+                  <button
+                    className={"attach-button btn"}
+                    onClick={() => handleFileUpload()}
+                    onChange={(e) => handleFileAdd(e)}
+                  >
+                    <span>{MdAttachFile()} Attach File</span>
                     <input
-                      type={"number"}
-                      className="form-control"
-                      name={"budget"}
-                      value={listingData.budget}
-                      onChange={(e) => handleUpdate(e)}
-                      placeholder={"Budget"}
+                      className={"attach-input"}
+                      type="file"
+                      ref={fileInput}
+                      multiple={true}
                     />
+                  </button>
+                </div>
+
+                {files ? (
+                  files.map((file) => (
+                    <>
+                      <div className={"fileItems"}>
+                        <span className={"card fileItem-text"}>
+                          {file.name}
+                        </span>
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleRemoveFile(file.key)}
+                        >
+                          {TiDelete()}
+                        </span>
+                      </div>
+                    </>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </div>
+
+              {/*Category & Skills*/}
+              <div className={"review-card-body-section"}>
+                <div className={"section-name"}>
+                  <span className={"section-name-label"}>Category</span>
+                  <span className={"description"}>
+                    Choose a category that best fits your jobs requirements.
+                  </span>
+                </div>
+
+                <select
+                  onChange={(e) => onSelectCategory(e.target.value)}
+                  value={selectedCategory}
+                  className="section-select"
+                >
+                  <option
+                    key={"disabled"}
+                    hidden={true}
+                    value={"Choose Category"}
+                  >
+                    Choose Category
+                  </option>
+
+                  {categories ? (
+                    categories.map((cat) => (
+                      <>
+                        <option value={cat.title} key={cat.uuid}>
+                          {cat.title}
+                        </option>
+                      </>
+                    ))
+                  ) : (
+                    <>Loading Categories</>
+                  )}
+                </select>
+
+                {/*Skills*/}
+                <div className={"section-name"}>
+                  <span className={"section-name-label"}>Skills</span>
+                  <span className={"description"}>
+                    Click on skills to add them to your job requirements.
+                  </span>
+                </div>
+
+                <div className={"skills-div"}>
+                  {skills[0] ? (
+                    skills.map((skill) => (
+                      <span
+                        className={"skill-select"}
+                        value={skill.title}
+                        key={skill.uuid}
+                        style={
+                          selectedSkills.includes(skill.title)
+                            ? { backgroundColor: "#59b001", color: "white" }
+                            : { backgroundColor: "#e3e3e3" }
+                        }
+                        onClick={() => handleSelectSkill(skill.title)}
+                      >
+                        {skill.title}
+                      </span>
+                    ))
+                  ) : (
+                    <>
+                      <p>Please select a category to populate skills.</p>
+                    </>
+                  )}
+                </div>
+                {/*  End Skills*/}
+              </div>
+              {/*  End Category & Skills */}
+
+              {/*Job Scope*/}
+              <div className={"review-card-body-section"}>
+                <div className={"section-name"}>
+                  <span className={"section-name-label"}>
+                    <h4>Job Specifications</h4>
+                  </span>
+                </div>
+
+                {/*Scale*/}
+                <div className={"section-multiple"}>
+                  <div className={"section-multiple-item"}>
+                    <div className={"section-name"}>
+                      <span className={"section-name-label"}>Scale</span>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"small"}
+                            type="radio"
+                            checked={scale === "small"}
+                            onChange={(e) => handleScale(e)}
+                          />
+                          <span className={"choice"}>Small</span>
+                        </div>
+
+                        <span className={"description"}>
+                          Simple non-complex projects or tasks.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"medium"}
+                            type="radio"
+                            checked={scale === "medium"}
+                            onChange={(e) => handleScale(e)}
+                          />
+                          <span className={"choice"}>Medium</span>
+                        </div>
+
+                        <span className={"description"}>
+                          Detailed projects or tasks.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"large"}
+                            type="radio"
+                            checked={scale === "large"}
+                            onChange={(e) => handleScale(e)}
+                          />
+                          <span className={"choice"}>Large</span>
+                        </div>
+
+                        <span className={"description"}>
+                          Robust projects or tasks.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Length*/}
+                  <div className={"section-multiple-item"}>
+                    <div className={"section-name"}>
+                      <span className={"section-name-label"}>
+                        Expected Length
+                      </span>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"1 to 3 months"}
+                            type="radio"
+                            checked={length === "1 to 3 months"}
+                            onChange={(e) => handleLength(e)}
+                          />
+                          <span className={"choice"}>1 to 3 months</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"3 to 6 months"}
+                            type="radio"
+                            checked={length === "3 to 6 months"}
+                            onChange={(e) => handleLength(e)}
+                          />
+                          <span className={"choice"}>3 to 6 months</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"6 or more months"}
+                            type="radio"
+                            checked={length === "6 or more months"}
+                            onChange={(e) => handleLength(e)}
+                          />
+                          <span className={"choice"}>6 or more months</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Experience*/}
+                  <div className={"section-multiple-item"}>
+                    <div className={"section-name"}>
+                      <span className={"section-name-label"}>
+                        Experience Level
+                      </span>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"Entry Level"}
+                            type="radio"
+                            checked={experience === "Entry Level"}
+                            onChange={(e) => handleExperience(e)}
+                          />
+                          <span className={"choice"}>Entry Level</span>
+                        </div>
+
+                        <span className={"description"}>Description</span>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"Intermediate"}
+                            type="radio"
+                            checked={experience === "Intermediate"}
+                            onChange={(e) => handleExperience(e)}
+                          />
+                          <span className={"choice"}>Intermediate</span>
+                        </div>
+
+                        <span className={"description"}>Description</span>
+                      </div>
+                    </div>
+
+                    <div className={"check-item"}>
+                      <div className={"check-item-inner"}>
+                        <div>
+                          <input
+                            value={"Expert"}
+                            type="radio"
+                            checked={experience === "Expert"}
+                            onChange={(e) => handleExperience(e)}
+                          />
+
+                          <span className={"choice"}>Expert</span>
+                        </div>
+
+                        <span className={"description"}>Description</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                /* End Budget */
-              )}
-            </>
-          ) : (
-            <></>
-          )}
 
-          {/* Next / Previous Buttons*/}
-          {step === 1 && !showLoading ? (
-            <div className={"prev-next-btn-div"}>
-              <button
-                className={"btn"}
-                value={0}
-                onClick={(e) => handleStep(e)}
-                disabled={true}
-              >
-                Previous
-              </button>
+                <div className={"section-multiple-item"}>
+                  <div className={"section-name"}>
+                    <span className={"section-name-label"}>Openings</span>
+                    <span className={"description"}>
+                      Number of freelancers required for this listing.
+                    </span>
+                  </div>
+                  <div></div>
 
-              <button
-                className={"btn"}
-                value={1}
-                onClick={(e) => handleStep(e)}
-                disabled={nextDisabled}
-              >
-                Next
-              </button>
+                  <div className={"check-item"}>
+                    <div className={"check-item-inner"}>
+                      <div>
+                        <span className={"hourly-fixed-text"}>
+                          {MdPerson()}
+                          <input
+                            name={"openings"}
+                            value={listingData.openings}
+                            onChange={(e) => handleListingData(e)}
+                            type="text"
+                            className={"form-control form-control-sm"}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/*End openings*/}
+
+                {/*Budget*/}
+                <div className={"section-multiple-item"}>
+                  <div className={"section-name"}>
+                    <span className={"section-name-label"}>Budget</span>
+                    <span className={"description"}>
+                      Set a budget amount and pay type for this listing.
+                    </span>
+                  </div>
+
+                  <div className={"check-item"}>
+                    <div className={"check-item-inner"}>
+                      <div>
+                        <input
+                          value={"hourly"}
+                          type="radio"
+                          checked={payTypeChoice === "hourly"}
+                          onChange={(e) => handlePayTypeChoice(e)}
+                        />
+                        <span className={"choice choice-budget"}>Hourly</span>
+
+                        <input
+                          value={"fixed"}
+                          type="radio"
+                          checked={payTypeChoice === "fixed"}
+                          onChange={(e) => handlePayTypeChoice(e)}
+                        />
+
+                        <span className={"choice choice-budget"}>Fixed</span>
+                      </div>
+
+                      <div>
+                        <span className={"hourly-fixed-text"}>
+                          {FaDollarSign()}
+                          <input
+                            name={"budget"}
+                            value={listingData.budget}
+                            onChange={(e) => handleListingData(e)}
+                            type="text"
+                            className={"form-control form-control-sm"}
+                          />{" "}
+                          {payTypeChoice === "hourly" ? "/hr" : ""}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* End Budget*/}
+                <div className={"submit-btn-div"}>
+                  <button
+                    disabled={isMuted}
+                    onClick={(e) => handleSubmit(e)}
+                    className={"btn sub-draft"}
+                  >
+                    Submit
+                  </button>
+                  <button className={"btn btn-primary"}>Save as Draft</button>
+                </div>
+              </div>
             </div>
-          ) : (
-            <>
-              {step > 1 && step < 5 ? (
-                <div className={"prev-next-btn-div"}>
-                  <button
-                    className={"btn"}
-                    value={0}
-                    onClick={(e) => handleStep(e)}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className={"btn"}
-                    value={1}
-                    onClick={(e) => handleStep(e)}
-                    disabled={nextDisabled}
-                  >
-                    Next
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className={"prev-next-btn-div"}>
-                    <button
-                      className={"btn"}
-                      value={0}
-                      onClick={(e) => handleStep(e)}
-                    >
-                      Previous
-                    </button>
-                    <button
-                      className={"btn"}
-                      value={1}
-                      onClick={(e) => handleSubmitReview(e)}
-                    >
-                      Review
-                    </button>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-
-          {/* End Next / Previous Buttons*/}
-        </div>
+          </div>
+        </span>
       </div>
     </>
   );

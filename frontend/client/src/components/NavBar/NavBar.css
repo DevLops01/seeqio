@@ -27,6 +27,11 @@
     text-decoration: none;
 }
 
+.logo-image {
+    width: 30px;
+    height: 30px;
+}
+
 .NavLogo:hover {
     color: #ffffff !important;
 }

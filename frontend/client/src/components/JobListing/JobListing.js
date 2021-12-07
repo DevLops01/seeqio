@@ -22,7 +22,6 @@ function JobListing({ page }) {
       .catch((e) => {
         console.log(e);
       });
-    console.log("JOB_LISTINGS", jobListings);
   }, [jobListings.length, page]);
 
   return (

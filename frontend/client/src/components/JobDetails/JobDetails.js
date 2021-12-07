@@ -5,9 +5,12 @@ import { MdAttachMoney, MdDateRange, MdSchool, MdWork } from "react-icons/md";
 import "./JobDetails.css";
 import TimeAgo from "../TimeAgo/TimeAgo";
 import axios from "axios";
+import AppContext from "../../context/context";
 
 function JobDetails() {
+  const { user } = useContext(AppContext);
   const [listing, setListing] = useState([]);
+  const [hasProposed, setHasProposed] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
@@ -22,6 +25,15 @@ function JobDetails() {
         console.log(e);
       });
   }, []);
+
+  useEffect(() => {
+    if (listing[0]) {
+      if (listing[0].proposals.includes(user.uuid)) {
+        console.log(listing.proposal);
+        setHasProposed(true);
+      }
+    }
+  }, [listing[0]]);
 
   return (
     <>
@@ -63,9 +75,15 @@ function JobDetails() {
           <div className={"ContainerItems RightBar card"}>
             <div className={"right-bar-header"}>
               <div>
-                <Link to={`/proposal/create/${id}`}>
-                  <button className={"prop-btn btn"}>Submit Proposal</button>
-                </Link>
+                {hasProposed ? (
+                  <Link to={`/proposal/view/${id}`}>
+                    <button className={"prop-btn btn"}>View Proposal</button>
+                  </Link>
+                ) : (
+                  <Link to={`/proposal/create/${id}`}>
+                    <button className={"prop-btn btn"}>Submit Proposal</button>
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -85,27 +103,27 @@ function JobDetails() {
 
                 {/**/}
 
-                <div className={"item-wrap"}>
-                  <span className={"right-bar-icon"}>{MdDateRange()}</span>
-                  <div className={"right-details-stacked"}>
-                    <span className={"item-title"}>Start Date</span>
-                    <span>
-                      {new Date(currentListing.startDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
+                {/*<div className={"item-wrap"}>*/}
+                {/*  <span className={"right-bar-icon"}>{MdDateRange()}</span>*/}
+                {/*  <div className={"right-details-stacked"}>*/}
+                {/*    <span className={"item-title"}>Start Date</span>*/}
+                {/*    <span>*/}
+                {/*      {new Date(currentListing.startDate).toLocaleDateString()}*/}
+                {/*    </span>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
 
                 {/**/}
 
-                <div className={"item-wrap"}>
-                  <span className={"right-bar-icon"}>{MdDateRange()}</span>
-                  <div className={"right-details-stacked"}>
-                    <span className={"item-title"}>End Date</span>
-                    <span>
-                      {new Date(currentListing.endDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
+                {/*<div className={"item-wrap"}>*/}
+                {/*  <span className={"right-bar-icon"}>{MdDateRange()}</span>*/}
+                {/*  <div className={"right-details-stacked"}>*/}
+                {/*    <span className={"item-title"}>End Date</span>*/}
+                {/*    <span>*/}
+                {/*      {new Date(currentListing.endDate).toLocaleDateString()}*/}
+                {/*    </span>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
 
                 {/**/}
 

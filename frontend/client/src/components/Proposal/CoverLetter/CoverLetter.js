@@ -12,7 +12,6 @@ function CoverLetter({
   allFiles,
   setFiles,
   setAllFiles,
-  handleSubmit,
   coverLetter,
   setCoverLetter,
   handleTextField,
@@ -127,11 +126,11 @@ function CoverLetter({
         </div>
       </div>
 
-      <div className={"sub-btn-div"}>
-        <button className={"sub-prop-btn"} onClick={(e) => handleSubmit(e)}>
-          Submit
-        </button>
-      </div>
+      {/*<div className={"sub-btn-div"}>*/}
+      {/*  <button className={"sub-prop-btn"} onClick={(e) => handleSubmit(e)}>*/}
+      {/*    Submit*/}
+      {/*  </button>*/}
+      {/*</div>*/}
     </>
   );
 }

@@ -27,7 +27,7 @@ function Proposal() {
   const [coverLetter, setCoverLetter] = useState("");
   const [allFiles, setAllFiles] = useState([]);
   const [files, setFiles] = useState([]);
-
+  const [submitDisabled, setSubmitDisabled] = useState(true);
   const [milestones, setMilestones] = useState([
     {
       title: "",
@@ -36,6 +36,36 @@ function Proposal() {
       key: "default",
     },
   ]);
+
+  useEffect(() => {
+    if (listing[0]) {
+      if (listing[0].proposals.includes(user.uuid)) {
+        history.push(`/find-work/${id}`);
+      }
+    }
+  }, [listing[0]]);
+
+  useEffect(() => {
+    if (byMilestone && coverLetter.length > 100) {
+      let allFieldsComplete = [];
+
+      milestones.forEach((milestone) => {
+        allFieldsComplete.push(
+          Object.values(milestone).every((field) => field !== "")
+        );
+      });
+
+      if (allFieldsComplete.includes(false)) return setSubmitDisabled(true);
+
+      return setSubmitDisabled(false);
+    }
+
+    if (!byMilestone && proposalRate > 0 && coverLetter.length > 100) {
+      return setSubmitDisabled(false);
+    }
+
+    return setSubmitDisabled(true);
+  }, [byMilestone, proposalRate, milestones, coverLetter]);
 
   const handleProposalRate = async (e) => {
     if (!isNaN(e.target.value)) {
@@ -55,6 +85,7 @@ function Proposal() {
 
   const handleSubmit = async () => {
     let data = new FormData();
+
     files.map((upload) => {
       data.append("file", upload.file);
     });
@@ -135,6 +166,7 @@ function Proposal() {
                         />
                       ) : (
                         <Completion
+                          setProposalRate={setProposalRate}
                           proposalRate={proposalRate}
                           currentListing={currentListing}
                           handleProposalRate={handleProposalRate}
@@ -154,8 +186,17 @@ function Proposal() {
               files={files}
               setFiles={setFiles}
               handleTextField={handleTextField}
-              handleSubmit={handleSubmit}
             />
+          </div>
+
+          <div className={"sub-btn-div"}>
+            <button
+              disabled={submitDisabled}
+              className={"btn sub-prop-btn "}
+              onClick={(e) => handleSubmit(e)}
+            >
+              Submit
+            </button>
           </div>
         </>
       ))}

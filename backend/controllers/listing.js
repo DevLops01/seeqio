@@ -44,7 +44,36 @@ exports.listingById = async (req, res) => {
 // @access  Private
 exports.clientListings = async (req, res) => {
   try {
-    const listings = await Listing.find({ creator: req.user.id });
+    const listings = await Listing.find({
+      creator: req.user.id,
+      isDraft: false,
+    })
+      .sort({
+        createdAt: "desc",
+      })
+      .limit(parseInt(req.params.limit));
+
+    if (listings) {
+      return res.status(200).send(listings);
+    }
+
+    return res.status(404).send("Listing not found");
+  } catch (e) {
+    console.log(e);
+    return res.status(404).send("Listings not found");
+  }
+};
+
+// @route   GET api/listing/client/recent/drafts
+// @desc    returns recent listings created by a client user
+// @access  Private
+exports.clientDraftListings = async (req, res) => {
+  try {
+    const listings = await Listing.find({ creator: req.user.id, isDraft: true })
+      .sort({
+        createdAt: "desc",
+      })
+      .limit(parseInt(req.params.limit));
 
     if (listings) {
       return res.status(200).send(listings);
@@ -62,6 +91,19 @@ exports.clientListings = async (req, res) => {
 // @access  Private
 exports.draft = async (req, res) => {
   try {
+    const user = await User.findOne({ uuid: req.user.id });
+
+    if (!user) {
+      return res
+        .status(401)
+        .send("You must be logged in to submit a job listing.");
+    }
+
+    if (user.type !== "client") {
+      console.log(req.user);
+      return res.status(401).send("Only client accounts can create listings");
+    }
+
     const id = uuidv4();
 
     const skillList = req.body.skills;
@@ -122,42 +164,47 @@ exports.getDraft = async (req, res) => {
 // @access  Private
 exports.create = async (req, res) => {
   try {
-    const {
-      creator,
-      title,
-      payType,
-      budget,
-      description,
-      experienceLevel,
-      startDate,
-      endDate,
-      skills,
-      jobDuration,
-      openings,
-    } = req.body;
+    const user = await User.findOne({ uuid: req.user.id });
+
+    if (!user) {
+      return res
+        .status(401)
+        .send("You must be logged in to submit a job listing.");
+    }
+
+    if (user.type !== "client") {
+      console.log(req.user);
+      return res.status(401).send("Only client accounts can create listings");
+    }
+
+    const allFieldsCompleted = Object.values(req.body).every(
+      (field) => field.length > 0
+    );
+
+    if (!allFieldsCompleted) {
+      return res.status(400).send("All fields are required");
+    }
 
     const listing = await new Listing({
-      creator,
-      title,
+      creator: req.body.creator,
+      title: req.body.title,
       category: req.body.category,
-      payType: payType.toLowerCase(),
-      payRate: budget,
-      description,
-      experienceLevel,
-      startDate,
-      endDate,
-      requiredSkills: skills,
-      jobDuration,
+      payType: req.body.payType.toLowerCase(),
+      payRate: req.body.budget,
+      description: req.body.description,
+      experienceLevel: req.body.experience.toLowerCase(),
+      requiredSkills: req.body.skills.split(","),
+      jobDuration: req.body.length,
       tokensRequired: 2,
       funded: true,
-      openings,
+      openings: req.body.openings,
       uuid: uuidv4(),
       isDraft: false,
     });
 
     await listing.save();
 
-    res.status(200).send("ping");
+    res.status(200).send("Listing posted");
   } catch (e) {
     console.log(e);
     res.status(500).send("Error");

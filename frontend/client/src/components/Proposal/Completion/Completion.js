@@ -11,7 +11,14 @@ function Completion({
   proposalRate,
   handleProposalRate,
   validateTerms,
+  setProposalRate,
 }) {
+  useEffect(() => {
+    if (isNaN(proposalRate)) {
+      setProposalRate(currentListing.payRate);
+    }
+  });
+
   return (
     <>
       <div className={"client-freelancer-rate"}>
@@ -35,8 +42,9 @@ function Completion({
           <div className={"money"}>
             <span className={"dollar-icon"}>{MdAttachMoney()}</span>
             <input
-              onMouseLeave={() => validateTerms()}
+              // onMouseLeave={() => validateTerms()}
               value={proposalRate}
+              onClick={() => setProposalRate("")}
               onChange={(e) => handleProposalRate(e)}
               className={"hourly-input-field"}
               placeholder={`0.00`}
@@ -58,7 +66,12 @@ function Completion({
             <input
               type={"string"}
               disabled={true}
-              value={parseFloat(proposalRate - proposalRate * 0.05).toFixed(2)}
+              value={
+                isNaN(parseFloat(proposalRate - proposalRate * 0.05).toFixed(2))
+                  ? 0
+                  : parseFloat(proposalRate - proposalRate * 0.05).toFixed(2)
+              }
+              // value={{ isNaN(parseFloat(proposalRate - proposalRate * 0.05).toFixed(2)) ? 0}}
               onChange={(e) => handleProposalRate(e)}
               className={"hourly-service-fee"}
               placeholder={`0.00`}

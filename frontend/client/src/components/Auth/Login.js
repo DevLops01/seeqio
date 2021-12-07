@@ -6,7 +6,7 @@ import "./Auth.css";
 
 function Login() {
   let history = useHistory();
-  const { isSession, setIsSession } = useContext(AppContext);
+  const { setUser, isSession, setIsSession } = useContext(AppContext);
 
   if (isSession.isAuth === "true") {
     history.push("/find-work");
@@ -17,6 +17,10 @@ function Login() {
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    setUser({});
+  }, []);
 
   const handleLogin = async (e) => {
     setLogin({ ...login, [e.target.name]: e.target.value });

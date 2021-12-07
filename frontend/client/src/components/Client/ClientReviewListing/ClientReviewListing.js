@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import { Redirect, Route, useHistory, Link, useParams } from "react-router-dom";
 import AppContext from "../../../context/context";
 import { MdDelete, MdAttachFile } from "react-icons/md";
+import { FaDollarSign } from "react-icons/fa";
+import { TiDelete } from "react-icons/ti";
 import axios from "axios";
 import "./ClientReviewListing.css";
 import { v4 as uuidv4 } from "uuid";
@@ -11,11 +13,13 @@ function ClientReviewListing() {
   const { id } = useParams();
   const fileInput = useRef();
 
+  const { user } = useContext(AppContext);
+
   // if (isSession.isAuth === "false") {
   //   history.push("/login");
   // }
 
-  const [listing, setListing] = useState([]);
+  // const [listing, setListing] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
@@ -23,6 +27,9 @@ function ClientReviewListing() {
   const [length, setLength] = useState("");
   const [experience, setExperience] = useState("");
   const [skills, setSkills] = useState([]);
+  // const [uploads, setUploads] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [payTypeChoice, setPayTypeChoice] = useState("hourly");
   const [listingData, setListingData] = useState({
     title: "",
     description: "",
@@ -80,6 +87,33 @@ function ClientReviewListing() {
     fileInput.current.click();
   };
 
+  const handleFileAdd = (e) => {
+    const insertedFile = e.target.files;
+    const newFiles = [];
+
+    // Gets all files if any and adds them to the uploads array
+    files.map((item) => {
+      newFiles.push(item);
+    });
+
+    // Loops through the newly added files and pushed them to the uploads array
+    for (let i = 0; i < insertedFile.length; i++) {
+      const fileObject = {};
+      fileObject["name"] = insertedFile[i].name;
+      fileObject["key"] = uuidv4();
+      fileObject["file"] = insertedFile[i];
+
+      newFiles.push(fileObject);
+    }
+
+    // Sets the state of SetFiles to uploads (previously uploaded, and newly uploaded)
+    setFiles(newFiles);
+  };
+
+  const handleRemoveFile = (id) => {
+    setFiles(files.filter((file) => file.key !== id));
+  };
+
   const handleScale = (e) => {
     setScale(e.target.value);
   };
@@ -90,6 +124,19 @@ function ClientReviewListing() {
 
   const handleExperience = (e) => {
     setExperience(e.target.value);
+  };
+
+  const handlePayTypeChoice = (e) => {
+    setPayTypeChoice(e.target.value);
+    setListingData({ ...listingData, ["payType"]: e.target.value });
+    console.log(listingData);
+  };
+
+  const handleListingData = (e) => {
+    if (e.target.name === "budget" && isNaN(e.target.value)) {
+      return;
+    }
+    setListingData({ ...listingData, [e.target.name]: e.target.value });
   };
 
   useEffect(() => {
@@ -104,6 +151,32 @@ function ClientReviewListing() {
         console.log(e);
       });
   }, []);
+
+  const handleSubmit = async () => {
+    let data = new FormData();
+    files.map((upload) => {
+      data.append("file", upload.file);
+    });
+
+    data.append("creator", user.uuid);
+    data.append("title", listingData.title);
+    data.append("description", listingData.description);
+    data.append("category", listingData.category);
+    data.append("skills", listingData.skills);
+    data.append("payType", listingData.payType);
+    data.append("budget", listingData.budget);
+
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/api/proposal/create`, data, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   // useEffect(() => {
   //   axios
@@ -139,9 +212,11 @@ function ClientReviewListing() {
                 </div>
 
                 <input
-                  value={listing.title}
+                  name={"title"}
+                  value={listingData.title}
                   className={"section-input"}
                   type="text"
+                  onChange={(e) => handleListingData(e)}
                 />
               </div>
 
@@ -152,24 +227,52 @@ function ClientReviewListing() {
                 </div>
 
                 <textarea
-                  value={listing.description}
+                  name={"description"}
+                  value={listingData.description}
                   rows={5}
                   className={"section-text-field"}
+                  onChange={(e) => handleListingData(e)}
                 />
 
                 <div className={"section-attach-files"}>
                   <button
                     className={"attach-button btn"}
                     onClick={() => handleFileUpload()}
+                    onChange={(e) => handleFileAdd(e)}
                   >
                     <span>{MdAttachFile()} Attach File</span>
                     <input
                       className={"attach-input"}
                       type="file"
                       ref={fileInput}
+                      multiple={true}
                     />
                   </button>
                 </div>
+
+                {files ? (
+                  files.map((file) => (
+                    <>
+                      <div className={"fileItems"}>
+                        <span className={"card fileItem-text"}>
+                          {file.name}
+                        </span>
+                        <span
+                          style={{
+                            color: "red",
+                            fontSize: "15px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleRemoveFile(file.key)}
+                        >
+                          {TiDelete()}
+                        </span>
+                      </div>
+                    </>
+                  ))
+                ) : (
+                  <></>
+                )}
               </div>
 
               {/*Category & Skills*/}
@@ -256,7 +359,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"small"}
-                            type="checkbox"
+                            type="radio"
                             checked={scale === "small"}
                             onClick={(e) => handleScale(e)}
                           />
@@ -274,7 +377,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"medium"}
-                            type="checkbox"
+                            type="radio"
                             checked={scale === "medium"}
                             onClick={(e) => handleScale(e)}
                           />
@@ -292,7 +395,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"large"}
-                            type="checkbox"
+                            type="radio"
                             checked={scale === "large"}
                             onClick={(e) => handleScale(e)}
                           />
@@ -319,7 +422,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"1 to 3 months"}
-                            type="checkbox"
+                            type="radio"
                             checked={length === "1 to 3 months"}
                             onClick={(e) => handleLength(e)}
                           />
@@ -333,7 +436,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"3 to 6 months"}
-                            type="checkbox"
+                            type="radio"
                             checked={length === "3 to 6 months"}
                             onClick={(e) => handleLength(e)}
                           />
@@ -347,7 +450,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"6 or more months"}
-                            type="checkbox"
+                            type="radio"
                             checked={length === "6 or more months"}
                             onClick={(e) => handleLength(e)}
                           />
@@ -357,6 +460,7 @@ function ClientReviewListing() {
                     </div>
                   </div>
 
+                  {/*Experience*/}
                   <div className={"section-multiple-item"}>
                     <div className={"section-name"}>
                       <span className={"section-name-label"}>
@@ -369,7 +473,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"Entry Level"}
-                            type="checkbox"
+                            type="radio"
                             checked={experience === "Entry Level"}
                             onClick={(e) => handleExperience(e)}
                           />
@@ -385,7 +489,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"Intermediate"}
-                            type="checkbox"
+                            type="radio"
                             checked={experience === "Intermediate"}
                             onClick={(e) => handleExperience(e)}
                           />
@@ -401,7 +505,7 @@ function ClientReviewListing() {
                         <div>
                           <input
                             value={"Expert"}
-                            type="checkbox"
+                            type="radio"
                             checked={experience === "Expert"}
                             onClick={(e) => handleExperience(e)}
                           />
@@ -414,7 +518,55 @@ function ClientReviewListing() {
                     </div>
                   </div>
                 </div>
-                {/**/}
+
+                {/*Budget*/}
+                <div className={"section-multiple-item"}>
+                  <div className={"section-name"}>
+                    <span className={"section-name-label"}>Budget</span>
+                  </div>
+
+                  <div className={"check-item"}>
+                    <div className={"check-item-inner"}>
+                      <div>
+                        <input
+                          value={"hourly"}
+                          type="radio"
+                          checked={payTypeChoice === "hourly"}
+                          onClick={(e) => handlePayTypeChoice(e)}
+                        />
+                        <span className={"choice choice-budget"}>Hourly</span>
+
+                        <input
+                          value={"fixed"}
+                          type="radio"
+                          checked={payTypeChoice === "fixed"}
+                          onClick={(e) => handlePayTypeChoice(e)}
+                        />
+
+                        <span className={"choice choice-budget"}>Fixed</span>
+                      </div>
+
+                      <div>
+                        <span className={"hourly-fixed-text"}>
+                          {FaDollarSign()}
+                          <input
+                            name={"budget"}
+                            value={listingData.budget}
+                            onChange={(e) => handleListingData(e)}
+                            type="text"
+                            className={"form-control form-control-sm"}
+                          />{" "}
+                          {payTypeChoice === "hourly" ? "/hr" : ""}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* End Budget*/}
+                <div className={"submit-btn-div"}>
+                  <button className={"btn sub-draft"}>Submit</button>
+                  <button className={"btn btn-primary"}>Save as Draft</button>
+                </div>
               </div>
             </div>
           </div>

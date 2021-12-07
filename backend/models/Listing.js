@@ -32,22 +32,14 @@ const listingSchema = new mongoose.Schema(
     proposals: [
       {
         type: String,
+        unique: false,
+        required: false,
       },
     ],
 
     experienceLevel: {
       type: String,
-      enum: ["beginner", "intermediate", "expert"],
-      required: true,
-    },
-
-    startDate: {
-      type: Date,
-      required: true,
-    },
-
-    endDate: {
-      type: Date,
+      enum: ["entry level", "intermediate", "expert"],
       required: true,
     },
 

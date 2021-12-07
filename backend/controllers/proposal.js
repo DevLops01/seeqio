@@ -6,16 +6,21 @@ const { v4: uuidv4 } = require("uuid");
 
 exports.create = async (req, res) => {
   try {
-    const {
-      creator,
-      listing,
-      isByMilestone,
-      payType,
-      proposalRate,
-      coverLetter,
-    } = req.body;
-
     const milestones = req.body.milestones;
+
+    const files = [];
+
+    req.files.forEach((file) => {
+      let mimeType = file.originalname.split(".");
+
+      mimeType = mimeType[mimeType.length - 1];
+
+      if (mimeType === "exe") return false;
+
+      file.id = `${uuidv4()}.${mimeType}`;
+
+      files.push(file);
+    });
 
     if (Array.isArray(milestones)) {
       milestones.map(async (entry) => {
@@ -27,13 +32,30 @@ exports.create = async (req, res) => {
       console.log(milestones);
     }
 
-    const proposal = await new Listing({
-      creator,
-      listing,
+    const listing = await Listing.findOne({ uuid: req.body.listing });
+
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+
+    if (listing.proposals.includes(req.body.creator)) {
+      console.log("already proposed");
+      return res
+        .status(500)
+        .send("Proposal already submitted for this listing.");
+    }
+
+    listing.proposals.push(req.body.creator);
+    await listing.save();
+
+    const proposal = await new Proposal({
+      creator: req.body.creator,
+      coverLetter: req.body.coverLetter,
     });
 
-    res.status(200).send("Created");
+    return res.status(200).send("Created");
   } catch (e) {
     console.log(e);
+    return res.status(404).send("Listing not found");
   }
 };

@@ -4,6 +4,7 @@ import "./NavBar.css";
 import { FiSettings } from "react-icons/fi";
 import { FaBell } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import seeqioLogo from "../../assets/seeqioLogo.png";
 
 import {
   Dropdown,
@@ -13,7 +14,7 @@ import {
 } from "reactstrap";
 
 function NavBar() {
-  const { isSession, setIsSession } = useContext(AppContext);
+  const { isSession, setIsSession, user, setUser } = useContext(AppContext);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notification, setNotifications] = useState(8);
@@ -22,11 +23,17 @@ function NavBar() {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const handleLogout = async () => {
+    await setUser({});
+    setIsSession({ type: "end" });
+  };
+
   return (
     <>
       <nav className="Nav navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="NavLogo navbar-brand me-2" to="/">
+            <img className={"logo-image"} src={seeqioLogo} alt="" />
             Seeqio
           </Link>
 
@@ -100,10 +107,12 @@ function NavBar() {
                   </DropdownToggle>
 
                   <DropdownMenu>
-                    <DropdownItem>Profile</DropdownItem>
+                    <DropdownItem>
+                      <Link to={`/freelancer/${user.uuid}`}>Profile</Link>
+                    </DropdownItem>
                     <DropdownItem divider />
                     <DropdownItem>{FiSettings()} Settings</DropdownItem>
-                    <DropdownItem onClick={() => setIsSession({ type: "end" })}>
+                    <DropdownItem onClick={() => handleLogout()}>
                       Logout
                     </DropdownItem>
                   </DropdownMenu>
