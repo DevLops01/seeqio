@@ -15,7 +15,7 @@
 .LeftBar {
     display: flex;
     min-height: 300px;
-    min-width: 55%;
+    max-width: 55%;
     padding: 20px;
 }
 

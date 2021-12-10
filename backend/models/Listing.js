@@ -31,9 +31,25 @@ const listingSchema = new mongoose.Schema(
 
     proposals: [
       {
-        type: String,
-        unique: false,
-        required: false,
+        freelancer: {
+          type: String,
+          unique: false,
+          required: false,
+        },
+
+        proposalId: {
+          type: String,
+        },
+
+        submitted: {
+          type: Date,
+          default: Date.now,
+        },
+
+        withdrawn: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
 

@@ -8,6 +8,9 @@ import axios from "axios";
 
 function JobListing({ page }) {
   const [jobListings, setListings] = useState([]);
+  const [maxLength, setMaxLength] = useState(250);
+  const [viewMore, setViewMore] = useState(false);
+  const [viewMoreKey, setViewMoreKey] = useState(false);
 
   useEffect(() => {
     axios
@@ -23,6 +26,11 @@ function JobListing({ page }) {
         console.log(e);
       });
   }, [jobListings.length, page]);
+
+  const handleViewMore = (id) => {
+    setViewMore(true);
+    setViewMoreKey(id);
+  };
 
   return (
     <>
@@ -45,8 +53,44 @@ function JobListing({ page }) {
                 </p>
               </div>
             </div>
+
             {/*Job Information paragraph*/}
-            <p className="card-text">{job.description}</p>
+            <p className="card-text">
+              {job.description.length > maxLength && !viewMore ? (
+                <>
+                  {`${job.description.substring(0, maxLength)}... `}
+                  <span
+                    className={"view-more-less"}
+                    onClick={() => handleViewMore(job.uuid)}
+                  >
+                    show more
+                  </span>
+                </>
+              ) : job.description.length > maxLength &&
+                viewMore &&
+                viewMoreKey === job.uuid ? (
+                <>
+                  {job.description.substring(0, job.description.length)}{" "}
+                  <span
+                    className={"view-more-less"}
+                    onClick={() => setViewMore(false)}
+                  >
+                    show less
+                  </span>
+                </>
+              ) : (
+                <>
+                  {`${job.description.substring(0, maxLength)}... `}
+                  <span
+                    className={"view-more-less"}
+                    onClick={() => handleViewMore(job.uuid)}
+                  >
+                    show more
+                  </span>
+                </>
+              )}
+            </p>
+
             <div className={"submittedApps"}>
               <p>Openings: {job.openings}</p>
               <p>Proposals: {job.proposals.length}</p>

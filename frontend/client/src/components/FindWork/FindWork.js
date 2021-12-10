@@ -9,7 +9,7 @@ import { AiFillEye } from "react-icons/ai";
 
 function FindWork() {
   const history = useHistory();
-  const { isSession, user } = useContext(AppContext);
+  const { isSession, user, setUser, setIsSession } = useContext(AppContext);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -17,6 +17,27 @@ function FindWork() {
       history.push("/login");
     }
   }, [isSession.isAuth]);
+
+  useEffect(() => {
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/user`,
+        {},
+        { withCredentials: true }
+      )
+      .then(async (res) => {
+        if (res.status === 200) {
+          setUser(res.data);
+        }
+        return;
+      })
+      .catch((e) => {
+        if (e.response.status === 504) {
+          setUser({});
+          setIsSession({ type: "end" });
+        }
+      });
+  }, [user.email]);
 
   // useEffect(() => {
   //   if (user.type !== "freelancer") {
@@ -38,10 +59,10 @@ function FindWork() {
           </div>
         </div>
 
-        <div className={"skills-left-div"}>
+        <div className={"skills-left-div card"}>
           <div className={"skills-details"}>
             <div className={"skills-title"}>
-              <h4>My Skills</h4>
+              <h4>Filters</h4>
             </div>
             <span>Software Development</span>
           </div>
@@ -60,10 +81,25 @@ function FindWork() {
         </div>
 
         <div className={"user-info-right-div"}>
-          <span className={"view-profile-link"}>
-            <Link to={""}>{AiFillEye()} View Profile</Link>
-          </span>
-          <Link to={""}>75 Available Seeqs</Link>
+          <div className={"right-info-items card"}>
+            <div className={"right-item-inner-div"}>
+              <span className={"view-profile-link"}>
+                <Link to={`/freelancer/${user.uuid}`}>
+                  <span>{AiFillEye()}</span>View Profile
+                </Link>
+              </span>
+            </div>
+
+            <div className={"right-item-inner-div"}>
+              <Link to={""}>Available SEEQ: 75</Link>
+            </div>
+
+            <div className={"right-item-inner-div"}>
+              <Link to={`/proposals`}>
+                <span>Proposals</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </>

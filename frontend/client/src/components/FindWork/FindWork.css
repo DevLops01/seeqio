@@ -30,11 +30,11 @@
 .skills-left-div {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     width: 20%;
     height: 100px;
-    /*background-color: white;*/
+    background-color: white;
 }
 
 .skills-title {
@@ -63,14 +63,38 @@
 .user-info-right-div {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     width: 20%;
-    height: 100px;
 }
 
-.view-profile-link {
-    margin-bottom: 50px;
+.right-info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.right-info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.right-item-inner-div {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 15px;
+
+}
+
+.view-profile-link span{
+    margin: 5px;
+    font-size: 20px;
+    color: #59b001 !important;
 }
 
 @media screen and (max-width: 768px) {

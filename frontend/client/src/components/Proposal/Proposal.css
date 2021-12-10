@@ -366,3 +366,15 @@ input[type='radio']:checked:after {
     color: white;
 
 }
+
+.bid-total-div {
+    display: flex;
+    min-height: 30px;
+    justify-content: flex-end;
+}
+
+.bid-total {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}

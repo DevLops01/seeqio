@@ -1,0 +1,38 @@
+.sub-prop-div {
+    display: flex;
+    width: 100%;
+    min-height: 50px;
+    border-bottom: 1px solid #e3e3e3;
+}
+.prop-heading {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.prop-row {
+    display: flex;
+    min-height: 50px;
+    flex-wrap: nowrap;
+    align-items: center;
+    font-weight: bold;
+    color: #59b001;
+    border: 1px solid;
+}
+
+.sub-prop-inner-div {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin: 20px;
+
+}
+
+.sub-prop-item {
+    width: 100%;
+    justify-content: space-around;
+    display: flex;
+
+}
+

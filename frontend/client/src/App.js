@@ -14,6 +14,8 @@ import ClientCreateListing from "./components/Client/ClientCreateListing/ClientC
 import ClientReviewListing from "./components/Client/ClientReviewListing/ClientReviewListing";
 import ClientEdit from "./components/Client/ClientEdit/ClientEdit";
 import Profile from "./components/Profile/Profile";
+import MyProposals from "./components/MyProposals/MyProposals";
+import Inbox from "./components/Inbox/Inbox";
 
 function App() {
   return (
@@ -24,8 +26,10 @@ function App() {
         <Route exact path={"/login"} component={Login} />
         <Route exact path={"/register"} component={Register} />
         <Route exact path={"/freelancer/:id"} component={Profile} />
+        <Route exact path={"/inbox"} component={Inbox} />
         <FLRoute exact path={"/find-work"} component={FindWork} />
         <FLRoute exact path={"/find-work/:id"} component={JobDetails} />
+        <FLRoute exact path={"/proposals"} component={MyProposals} />
         <FLRoute exact path={"/proposal/create/:id"} component={Proposal} />
         <CLRoute exact path={"/client"} component={ClientHome} />
         <CLRoute

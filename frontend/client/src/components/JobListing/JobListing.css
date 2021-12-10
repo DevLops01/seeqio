@@ -119,3 +119,11 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.view-more-less {
+    font-size: small;
+    font-weight: bold;
+    cursor: pointer;
+    color: #59b001;
+}
+

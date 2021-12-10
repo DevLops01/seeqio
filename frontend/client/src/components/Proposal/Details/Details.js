@@ -16,7 +16,14 @@ function Details({ currentListing }) {
         <div className={"job-body"}>
           <h4>{currentListing.title}</h4>
           <p>{currentListing.description}</p>
-          <p>This job requires {currentListing.tokensRequired} Beacons</p>
+          <p>
+            <span style={{ fontWeight: "bold" }}>Tokens Required:</span>
+            <span
+              style={{ color: "#59b001", fontWeight: "bold", margin: "5px" }}
+            >
+              {currentListing.tokensRequired} SEEQ
+            </span>
+          </p>
         </div>
 
         <div className={"job-reqs"}>

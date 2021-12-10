@@ -10,6 +10,7 @@ const {
   draft,
   getDraft,
   clientDraftListings,
+  getListingsByProposalCreator,
 } = require("../controllers/listing");
 
 const storage = multer.memoryStorage({
@@ -24,6 +25,11 @@ const upload = multer({ storage }).array("file");
 // @desc    Show matching listings
 // @access  Private
 router.post("/recent", auth, recent);
+
+// @route   GET api/listing/by-proposal
+// @desc    Show matching listings
+// @access  Private
+router.get("/by-proposal/:id", auth, getListingsByProposalCreator);
 
 // @route   GET api/listing/:id
 // @desc    get single listings

@@ -1,12 +1,21 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { MdAttachMoney, MdAttachFile, MdDelete } from "react-icons/md";
+import { MdAttachFile, MdDelete } from "react-icons/md";
+import { FaDollarSign } from "react-icons/fa";
 import "../Proposal.css";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import AppContext from "../../../context/context";
 
-function Milestone({ milestones, setMilestones }) {
+function Milestone({
+  milestones,
+  setMilestones,
+  currentListing,
+  proposalRate,
+  setProposalRate,
+  totalAmount,
+  setTotalAmount,
+}) {
   const { user } = useContext(AppContext);
 
   const handleMilestoneChange = (e, i) => {
@@ -27,6 +36,21 @@ function Milestone({ milestones, setMilestones }) {
     );
   };
 
+  useEffect(() => {
+    let total = 0;
+
+    milestones.forEach((ms) => {
+      total = parseFloat(total);
+      total += parseFloat(ms.amount);
+    });
+
+    if (isNaN(total)) {
+      return;
+    }
+
+    setTotalAmount(parseFloat(total).toFixed(2));
+  }, [milestones]);
+
   const addMileStoneInput = async () => {
     setMilestones([
       ...milestones,
@@ -42,6 +66,12 @@ function Milestone({ milestones, setMilestones }) {
   return (
     <>
       {/*If get Paid by Milsetone*/}
+      <div className={"client-freelancer-rate"}>
+        <span className={"rates"}>
+          <span className={"bold-title"}>Client's budget:</span>$
+          {currentListing.payRate.toFixed(2)}
+        </span>
+      </div>
 
       <div className={"paid-by-milestone-container"}>
         {milestones ? (
@@ -111,10 +141,17 @@ function Milestone({ milestones, setMilestones }) {
         ) : (
           <></>
         )}
+
         {/*Add additional milestone link*/}
         <span className={"add-milestone"} onClick={() => addMileStoneInput()}>
           Add Milestone
         </span>
+
+        <div className={"bid-total-div"}>
+          <div className={"bid-total"}>
+            Total Bid: {FaDollarSign()} {totalAmount}
+          </div>
+        </div>
       </div>
     </>
   );

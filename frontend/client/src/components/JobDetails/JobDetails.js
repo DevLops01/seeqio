@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, Redirect, useHistory, useParams } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import { MdAttachMoney, MdDateRange, MdSchool, MdWork } from "react-icons/md";
 import "./JobDetails.css";
@@ -8,10 +8,30 @@ import axios from "axios";
 import AppContext from "../../context/context";
 
 function JobDetails() {
-  const { user } = useContext(AppContext);
+  const { user, setUser, setIsSession } = useContext(AppContext);
   const [listing, setListing] = useState([]);
   const [hasProposed, setHasProposed] = useState(false);
   const { id } = useParams();
+
+  useEffect(() => {
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/user`,
+        {},
+        { withCredentials: true }
+      )
+      .then(async (res) => {
+        if (res.status === 200) {
+          setUser(res.data);
+        }
+      })
+      .catch((e) => {
+        if (e.response.status === 504) {
+          setUser({});
+          setIsSession({ type: "end" });
+        }
+      });
+  }, [user.email]);
 
   useEffect(() => {
     axios
@@ -27,12 +47,23 @@ function JobDetails() {
   }, []);
 
   useEffect(() => {
-    if (listing[0]) {
-      if (listing[0].proposals.includes(user.uuid)) {
-        console.log(listing.proposal);
-        setHasProposed(true);
-      }
-    }
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/api/listing/by-proposal/${user.uuid}`,
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        res.data.listings.forEach((item) => {
+          if (listing[0] && item.uuid === listing[0].uuid) {
+            setHasProposed(true);
+          }
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [listing[0]]);
 
   return (

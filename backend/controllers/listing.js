@@ -210,3 +210,36 @@ exports.create = async (req, res) => {
     res.status(500).send("Error");
   }
 };
+
+// @route   GET api/listing/by-proposal/:id
+// @desc    returns listings that have proposals by account owner
+// @access  Private
+exports.getListingsByProposalCreator = async (req, res) => {
+  try {
+    const listings = await Listing.find({
+      proposals: { $elemMatch: { freelancer: req.user.id } },
+    });
+
+    const myProposals = [];
+
+    listings.forEach((listing) => {
+      listing.proposals.forEach((prop) => {
+        if (prop.freelancer === req.user.id) {
+          myProposals.push({
+            title: listing.title,
+            uuid: listing.uuid,
+            listingId: listing.uuid,
+            propData: prop,
+          });
+        }
+      });
+    });
+
+    // console.log(myProposals);
+
+    res.status(200).send({ listings: myProposals.reverse() });
+  } catch (e) {
+    console.log(e);
+    res.status(404).send("Error");
+  }
+};

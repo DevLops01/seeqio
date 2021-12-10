@@ -73,8 +73,6 @@ const userSchema = new mongoose.Schema(
 
     reviews: [
       {
-        type: Array,
-
         creator: {
           type: String,
           required: true,
@@ -86,6 +84,25 @@ const userSchema = new mongoose.Schema(
 
         rating: {
           type: Number,
+          required: true,
+        },
+
+        uuid: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+
+    proposals: [
+      {
+        listingTitle: {
+          type: String,
+          required: true,
+        },
+
+        listingId: {
+          type: String,
           required: true,
         },
 

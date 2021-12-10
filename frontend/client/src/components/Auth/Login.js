@@ -38,6 +38,10 @@ function Login() {
         { withCredentials: true }
       )
       .then((res) => {
+        setUser(res.data.user);
+        return res;
+      })
+      .then((res) => {
         if (res.status === 200) {
           setIsSession({ type: "start", payload: res.data.user.type });
         }

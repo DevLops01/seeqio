@@ -32,10 +32,22 @@ function NavBar() {
     <>
       <nav className="Nav navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <Link className="NavLogo navbar-brand me-2" to="/">
-            <img className={"logo-image"} src={seeqioLogo} alt="" />
-            Seeqio
-          </Link>
+          {user.type === "freelancer" ? (
+            <Link className="NavLogo navbar-brand me-2" to="/find-work">
+              <img className={"logo-image"} src={seeqioLogo} alt="" />
+              <span className={"logo-brand"}>Seeqio</span>
+            </Link>
+          ) : user.type === "client" ? (
+            <Link className="NavLogo navbar-brand me-2" to="/client">
+              <img className={"logo-image"} src={seeqioLogo} alt="" />
+              <span className={"logo-brand"}>Seeqio</span>
+            </Link>
+          ) : (
+            <Link className="NavLogo navbar-brand me-2" to="/">
+              <img className={"logo-image"} src={seeqioLogo} alt="" />
+              <span className={"logo-brand"}>Seeqio</span>
+            </Link>
+          )}
 
           <button
             className="navbar-toggler"

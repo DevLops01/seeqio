@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const milestoneSchema = new mongoose.Schema(
   {
-    freelancer: {
+    creator: {
       type: String,
       required: true,
     },
@@ -22,24 +22,19 @@ const milestoneSchema = new mongoose.Schema(
       required: true,
     },
 
-    desc: {
+    title: {
       type: String,
       required: true,
       maxlength: 100,
     },
 
-    amount: {
-      type: Number,
-      required: true,
-    },
-
-    startDate: {
-      type: Date,
-      required: true,
-    },
-
     endDate: {
       type: Date,
+      required: true,
+    },
+
+    amount: {
+      type: Number,
       required: true,
     },
 
@@ -58,6 +53,15 @@ const milestoneSchema = new mongoose.Schema(
       type: Date,
     },
 
+    canceled: {
+      type: Boolean,
+      default: false,
+    },
+
+    canceledDate: {
+      type: Date,
+    },
+
     approved: {
       type: Boolean,
       default: false,
@@ -68,6 +72,11 @@ const milestoneSchema = new mongoose.Schema(
     },
 
     paid: {
+      type: Boolean,
+      default: false,
+    },
+
+    paidDate: {
       type: Boolean,
       default: false,
     },

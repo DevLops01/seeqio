@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, Redirect, useHistory, useParams } from "react-router-dom";
 import { MdAttachMoney, MdAttachFile, MdDelete } from "react-icons/md";
 import AppContext from "../../context/context";
 import "./Proposal.css";
@@ -13,7 +13,7 @@ import Completion from "./Completion/Completion";
 import CoverLetter from "./CoverLetter/CoverLetter";
 
 function Proposal() {
-  const { user, isSession } = useContext(AppContext);
+  const { user, setUser, isSession, setIsSession } = useContext(AppContext);
 
   let history = useHistory();
   if (isSession.isAuth === "false") {
@@ -22,11 +22,12 @@ function Proposal() {
 
   const { id } = useParams();
   const [listing, setListing] = useState([]);
-  const [proposalRate, setProposalRate] = useState(user.hourlyRate);
+  const [proposalRate, setProposalRate] = useState(0);
   const [byMilestone, setByMilestone] = useState(true);
   const [coverLetter, setCoverLetter] = useState("");
   const [allFiles, setAllFiles] = useState([]);
   const [files, setFiles] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [milestones, setMilestones] = useState([
     {
@@ -38,13 +39,46 @@ function Proposal() {
   ]);
 
   useEffect(() => {
-    if (listing[0]) {
-      if (listing[0].proposals.includes(user.uuid)) {
-        history.push(`/find-work/${id}`);
-      }
-    }
+    axios
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/user`,
+        {},
+        { withCredentials: true }
+      )
+      .then(async (res) => {
+        if (res.status === 200) {
+          setUser(res.data);
+        }
+      })
+      .catch((e) => {
+        if (e.response.status === 504) {
+          setUser({});
+          setIsSession({ type: "end" });
+        }
+      });
+  }, [user.email]);
+
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/api/listing/by-proposal/${user.uuid}`,
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        res.data.listings.forEach((item) => {
+          if (item.uuid === listing[0].uuid) {
+            history.push(`/find-work/${listing[0].uuid}`);
+          }
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, [listing[0]]);
 
+  // Handle submit button disabled if payType = fixed
   useEffect(() => {
     if (byMilestone && coverLetter.length > 100) {
       let allFieldsComplete = [];
@@ -67,6 +101,19 @@ function Proposal() {
     return setSubmitDisabled(true);
   }, [byMilestone, proposalRate, milestones, coverLetter]);
 
+  // Handle submit button disabled if payType = hourly
+  useEffect(() => {
+    if (
+      listing[0].payType === "hourly" &&
+      coverLetter.length > 100 &&
+      proposalRate > 0
+    ) {
+      setSubmitDisabled(false);
+    }
+  }, [coverLetter, listing[0], proposalRate]);
+
+  //
+
   const handleProposalRate = async (e) => {
     if (!isNaN(e.target.value)) {
       setProposalRate((proposalRate) => e.target.value);
@@ -85,6 +132,7 @@ function Proposal() {
 
   const handleSubmit = async () => {
     let data = new FormData();
+    setSubmitDisabled(true);
 
     files.map((upload) => {
       data.append("file", upload.file);
@@ -92,10 +140,20 @@ function Proposal() {
 
     data.append("creator", user.uuid);
     data.append("listing", id);
-    data.append("isByMilestone", byMilestone);
     data.append("payType", listing[0].payType);
-    data.append("proposalRate", proposalRate);
     data.append("coverLetter", coverLetter);
+
+    if (byMilestone) {
+      data.append("proposalRate", totalAmount);
+    } else {
+      data.append("proposalRate", proposalRate);
+    }
+
+    if (listing[0].payType === "hourly") {
+      data.append("isByMilestone", false);
+    } else if (listing[0].payType === "fixed") {
+      data.append("isByMilestone", byMilestone);
+    }
 
     milestones.map((milestone) => {
       const milestoneData = {
@@ -111,9 +169,11 @@ function Proposal() {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res);
+        history.push("/proposals");
+        console.log(res.data);
       })
       .catch((e) => {
+        setSubmitDisabled(false);
         console.log(e);
       });
   };
@@ -158,12 +218,18 @@ function Proposal() {
                         byMilestone={byMilestone}
                         setByMilestone={setByMilestone}
                       />
-
                       {byMilestone ? (
-                        <Milestone
-                          milestones={milestones}
-                          setMilestones={setMilestones}
-                        />
+                        <>
+                          <Milestone
+                            totalAmount={totalAmount}
+                            setTotalAmount={setTotalAmount}
+                            setProposalRate={setProposalRate}
+                            proposalRate={proposalRate}
+                            milestones={milestones}
+                            setMilestones={setMilestones}
+                            currentListing={currentListing}
+                          />
+                        </>
                       ) : (
                         <Completion
                           setProposalRate={setProposalRate}

@@ -14,12 +14,6 @@ const proposalSchema = new mongoose.Schema(
       required: true,
     },
 
-    attachments: {
-      type: Array,
-      required: false,
-      default: [],
-    },
-
     listing: {
       type: String,
       required: true,
@@ -30,21 +24,10 @@ const proposalSchema = new mongoose.Schema(
       required: true,
     },
 
-    payType: {
-      type: String,
-      required: true,
-    },
-
     isByMilestone: {
       type: Boolean,
       required: true,
     },
-
-    milestones: [
-      {
-        type: String,
-      },
-    ],
 
     proposalRate: {
       type: Number,
@@ -54,6 +37,7 @@ const proposalSchema = new mongoose.Schema(
     uuid: {
       type: String,
       required: true,
+      unique: true,
     },
 
     isAccepted: {

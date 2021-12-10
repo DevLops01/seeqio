@@ -30,7 +30,7 @@ function Fixed({ byMilestone, setByMilestone }) {
         {/*Get paid by project*/}
         <div className={"radio-options-div"}>
           <input
-            onChange={() => setByMilestone(false)}
+            onChange={() => setByMilestone(!byMilestone)}
             value={!byMilestone}
             checked={!byMilestone}
             type="radio"
